@@ -391,7 +391,7 @@ class TransactionController extends Controller
             ]);
 
 
-            return response()->json(['status' => true, 'account_number' => $response]);
+            return $response;
 
             
         } 

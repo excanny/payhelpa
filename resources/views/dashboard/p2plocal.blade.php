@@ -1317,7 +1317,7 @@
                 <div class="col text-right">
                    
                         <h4 class="text-right text-dark font-weight-bold">
-                            <span class="account_number_box2"></span>@if(!is_null($p2p_state)) {{$p2p_state->dynamic_account_number}} @endif
+                            <span class="account_number_box2"></span>
                             <input type="hidden" class="account_number_box2">
                             
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" onclick="copyToClipboard('.account_number_box')">
@@ -1342,7 +1342,7 @@
                     <h4>Dollar Rate</h4>
                 </div>
                 <div class="col text-right">
-                    <h4 class="text-dark"> <span class="dollar_rate_releasing_lu"></span>@if(!is_null($p2p_state)) ₦{{number_format($p2p_state->rate)}}@endif</h4>
+                    <h4 class="text-dark"> <span class="dollar_rate_releasing_lu"></span></h4>
                 </div>
             </div>
 
@@ -1351,7 +1351,7 @@
                     <h4>Quantity</h4>
                 </div>
                 <div class="col text-right">
-                    <h4 class="text-dark"> <span class="amount_releasing_lu"></span>@if(!is_null($p2p_state)) ${{number_format($p2p_state->amount)}} @endif</h4>
+                    <h4 class="text-dark"> <span class="amount_releasing_lu"></span></h4>
                 </div>
             </div>
 
@@ -1360,7 +1360,7 @@
                     <h4>Amount needed</h4>
                 </div>
                 <div class="col text-right">
-                    <h4 class="text-dark"> <span class="value_releasing_lu"></span>@if(!is_null($p2p_state)) ₦{{number_format($p2p_state->rate * $p2p_state->amount)}}@endif</h4>
+                    <h4 class="text-dark"> <span class="value_releasing_lu"></span></h4>
                 </div>
             </div>
 
@@ -1681,9 +1681,9 @@
                         <h4>Account Number</h4>
                     </div>
                     <div class="col text-right">
-                       
+                        
                             <h4 class="text-right text-dark">
-                           <span>{{$user->reserved_account_number}}</span> 
+                           <span>@if(!is_null($lu_rate)){{$transaction_state->account_number}} @endif</span> 
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" onclick="copyToClipboard('#account_number_box3')">
                                 <path d="M5 5.10625V13.125C4.99988 13.9184 5.30154 14.6821 5.8438 15.2613C6.38606 15.8405 7.12831 16.1917 7.92 16.2437L8.125 16.25H13.6425C13.5133 16.6155 13.2739 16.932 12.9574 17.1559C12.6408 17.3797 12.2627 17.4999 11.875 17.5H7.5C6.50544 17.5 5.55161 17.1049 4.84835 16.4017C4.14509 15.6984 3.75 14.7446 3.75 13.75V6.875C3.7498 6.48709 3.86991 6.10867 4.09379 5.79189C4.31766 5.4751 4.63428 5.23555 5 5.10625ZM14.375 2.5C14.8723 2.5 15.3492 2.69754 15.7008 3.04917C16.0525 3.40081 16.25 3.87772 16.25 4.375V13.125C16.25 13.6223 16.0525 14.0992 15.7008 14.4508C15.3492 14.8025 14.8723 15 14.375 15H8.125C7.62772 15 7.15081 14.8025 6.79917 14.4508C6.44754 14.0992 6.25 13.6223 6.25 13.125V4.375C6.25 3.87772 6.44754 3.40081 6.79917 3.04917C7.15081 2.69754 7.62772 2.5 8.125 2.5H14.375ZM14.375 3.75H8.125C7.95924 3.75 7.80027 3.81585 7.68306 3.93306C7.56585 4.05027 7.5 4.20924 7.5 4.375V13.125C7.5 13.2908 7.56585 13.4497 7.68306 13.5669C7.80027 13.6842 7.95924 13.75 8.125 13.75H14.375C14.5408 13.75 14.6997 13.6842 14.8169 13.5669C14.9342 13.4497 15 13.2908 15 13.125V4.375C15 4.20924 14.9342 4.05027 14.8169 3.93306C14.6997 3.81585 14.5408 3.75 14.375 3.75Z" fill="#2A8BF2"/>
                                 </svg>

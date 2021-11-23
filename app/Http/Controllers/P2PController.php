@@ -37,12 +37,21 @@ class P2PController extends Controller
 
         $fu_rate = Transaction::where('is_taken', 0)->where('fu_id', auth()->user()->user_id)->first();
 
+        if(!is_null($lu_rate))
+        {
+            $transaction_state = WalletFundingRequest::where('transaction_id', $lu_rate->transaction_id)->first();
+        }
+        else
+        {
+            $transaction_state = '';
+        }
+
+        
+
         $date = new DateTime;
         $date->modify('-10 minutes');
 
-                $formatted_date = $date->format('Y-m-d H:i:s');
-
-        $p2p_state = P2PState::where('user_id', auth()->user()->user_id)->where('created_at', '>=',$formatted_date)->where('is_settled', 0)->first();
+        $formatted_date = $date->format('Y-m-d H:i:s');
       
 
         if($user->number_verified == 0)
@@ -60,17 +69,8 @@ class P2PController extends Controller
            
                 if($user->is_foreign_user == '0')
                 {
-                    if(is_null($p2p_state))
-                    {
-                        $show_modal = false;
-                        return view('dashboard.p2plocal', compact('user', 'transaction_offers_fu', 'lu_rate', 'lu_rate2', 'show_modal', 'p2p_state'));
-                    }
-                    else
-                    {
-                    
-                        $show_modal = true;
-                        return view('dashboard.p2plocal', compact('user', 'transaction_offers_fu', 'lu_rate', 'lu_rate2', 'show_modal', 'p2p_state'));
-                    }
+                  
+                    return view('dashboard.p2plocal', compact('user', 'transaction_offers_fu', 'lu_rate', 'lu_rate2', 'transaction_state'));
                 
                 }
                 elseif($user->is_foreign_user == '1')

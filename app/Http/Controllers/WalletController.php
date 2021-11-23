@@ -44,7 +44,7 @@ class WalletController extends Controller
             return response()->json(['requestSuccessful' => true, 'sessionId' => $request->sessionId, 'responseMessage' => 'duplicate transaction', 'responseCode' => '01']);
         }
 
-        $account_number_exists = User::where('reserved_account_number', $request->accountNumber)->first(); 
+        $account_number_exists = WalletFundingRequest::where('account_number', $request->accountNumber)->first(); 
    
         if($account_number_exists == null)
         {
@@ -54,31 +54,27 @@ class WalletController extends Controller
         {
             $account_number = WalletFundingRequest::where('account_number', $request->accountNumber)->first();
 
-            if($account_number->amount == $request->transactionAmount)
-            {
+            //Get previous balance
+            $user = User::where('user_id', $account_number_exists->user_id)->first();
+        
+            $current_balance = $user->wallet;
+        
+            $new_balance = $current_balance + $request->transactionAmount;
 
-                //Get previous balance
-                $user = User::where('user_id', $account_number_exists->user_id)->first();
-            
-                $current_balance = $user->wallet;
-            
-                $new_balance = $current_balance + $request->transactionAmount;
+            //Update wallet here
+            $data = [
+                'wallet' => $new_balance,
+            ];
 
-                //Update wallet here
-                $data = [
-                    'wallet' => $new_balance,
-                ];
+            $updated = User::where('user_id', $account_number_exists->user_id)->update($data);
 
-                $updated = User::where('user_id', $account_number_exists->user_id)->update($data);
+            $data3 = [
+                'is_payment_confirmed' => 1
+            ];
 
-                $data3 = [
-                    'is_payment_confirmed' => 1
-                ];
+            $updated3 = Transaction::where('transaction_id', $account_number->transaction_id)->update($data3);
 
-                $updated3 = Transaction::where('transaction_id', $account_number->transaction_id)->update($data3);
-
-            }
-
+    
             $data2 = [
                 'settlement_id' => $request->settlementId
             ];
