@@ -381,41 +381,42 @@ class TransactionController extends Controller
 
     public function generatedynamicaccountnumber(Request $request)
     {
-        // try 
-        // {
-        //     // $response = Http::withHeaders([
-        //     //     'X-Auth-Signature' => 'BE09BEE831CF262226B426E39BD1092AF84DC63076D4174FAC78A2261F9A3D6E59744983B8326B69CDF2963FE314DFC89635CFA37A40596508DD6EAAB09402C7',
-        //     //     'Client-Id' => 'dGVzdF9Qcm92aWR1cw=='
-        //     // ])->post('http://154.113.16.142:8088/appdevapi/api/PiPCreateDynamicAccountNumber', [
-        //     //     'account_name' => 'PayHelpa',
-        //     // ]);
+        try 
+        {
+            $response = Http::withHeaders([
+                'X-Auth-Signature' => 'BE09BEE831CF262226B426E39BD1092AF84DC63076D4174FAC78A2261F9A3D6E59744983B8326B69CDF2963FE314DFC89635CFA37A40596508DD6EAAB09402C7',
+                'Client-Id' => 'dGVzdF9Qcm92aWR1cw=='
+            ])->post('http://154.113.16.142:8088/appdevapi/api/PiPCreateDynamicAccountNumber', [
+                'account_name' => 'PayHelpa',
+            ]);
 
-               
-    
-        // } catch (\Throwable $th) 
-        // {
-        //     throw $th;
-        // }
+
+            return response()->json(['status' => true, 'account_number' => $response]);
+
+            
+        } 
+        catch (\Throwable $th) 
+        {
+            throw $th;
+        }
 
        
         //Store P2P state
 
        
-        $user = User::where('user_id', auth()->user()->user_id)->first();
+        // $user = User::where('user_id', auth()->user()->user_id)->first();
 
-        if($user != null)
-        {
-            $reserved_account_number = $user->reserved_account_number;
+        // if($user != null)
+        // {
+        //     $reserved_account_number = $user->reserved_account_number;
 
-            return response()->json(['status' => true, 'account_number' => $reserved_account_number]);
-        }
-        else
-        {
+        //     return response()->json(['status' => true, 'account_number' => $reserved_account_number]);
+        // }
+        // else
+        // {
           
-            return response()->json(['status' => false, 'account_number' => null]);
-        }
-
-       
+        //     return response()->json(['status' => false, 'account_number' => null]);
+        // }
         
     }
 
