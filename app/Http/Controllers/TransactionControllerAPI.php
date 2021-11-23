@@ -561,14 +561,6 @@ class TransactionControllerAPI extends Controller
 
     public function transactiondetails($id)
     {
-        $validator = Validator::make($request->all(), [
-            "id" => 'required',
-        ]);
-
-        if($validator->fails())
-        {
-            return response()->json(['errors' => $validator->messages()], 400);
-        }
 
         $user = User::where('user_id', auth()->user()->user_id)->first();
         $transaction = Transaction::where('transaction_id', $id)->first();

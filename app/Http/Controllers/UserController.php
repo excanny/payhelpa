@@ -49,7 +49,6 @@ class UserController extends Controller
 
         $hash = openssl_random_pseudo_bytes(16);
         $hash = bin2hex($hash);
-        $public_key = 'ugdeuigduigeuide';
 
         try 
         {
@@ -96,11 +95,6 @@ class UserController extends Controller
         // Mail::to($email)->send(new MyTestMail($details));
 
         // $logged = Auth::attempt(['email' =>  $email, 'password' => $request->password]);
-
-
-           
-
-
 
     }
 
