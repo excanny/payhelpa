@@ -1770,6 +1770,10 @@ function isEveryInputEmpty()
 
 				$(".account_number_box2").val(response.account_number);
 
+				$(".account_name_box2").text(response.account_name);
+
+				$(".account_name_box2").val(response.account_name);
+
 				$("#myModal2b").hide();
 				$("#myModal2c").hide();
 				$("#myModal2d").show();				
@@ -2130,7 +2134,7 @@ function isEveryInputEmpty()
             success: function(response) {
                 //code to execute
 			
-				//console.log(response);
+				console.log(response);
 
 				if(response.transaction_succeed == true)
 				{
@@ -2277,6 +2281,10 @@ function isEveryInputEmpty()
 				$(".account_number_box1").text(response.account_number);
 
 				$(".account_number_box1").val(response.account_number);
+
+				$(".account_name_box1").text(response.account_name);
+
+				$(".account_name_box1").val(response.account_name);
 
 				$('#myModal1b').modal('hide');
 				$('#myModal1c').modal('hide');
@@ -2462,6 +2470,9 @@ function isEveryInputEmpty()
 
 		var account_number = $('.account_number_box2').val();
 		formData.append('account_number', account_number);
+
+		var account_name = $('.account_name_box2').val();
+		formData.append('account_name', account_name);
 
 		var transaction_subject = $('.transaction_subject_lu_input_rate').val();
 		formData.append('subject', transaction_subject);

@@ -31,22 +31,23 @@ class P2PController extends Controller
         $transaction_offers_fu = Transaction::where('is_taken', 0)->where('lu_id', null)->get();
         $transaction_offers_lu = Transaction::where('is_taken', 0)->where('fu_id', null)->where('is_payment_confirmed', 1)->get();
 
-        $lu_rate = Transaction::where('is_taken', 0)->where('is_payment_confirmed', 0)->where('lu_id', auth()->user()->user_id)->first();
-        $lu_rate2 = Transaction::where('is_taken', 0)->where('is_payment_confirmed', 1)->where('confirmed_transaction_seen', 0)->where('lu_id', auth()->user()->user_id)->first();
-        //return $lu_rate2;
+        $lu_rate = Transaction::where('is_payment_confirmed', 0)->where('lu_id', auth()->user()->user_id)->first();
+        $lu_rate2 = Transaction::where('is_payment_confirmed', 1)->where('confirmed_transaction_seen', 0)->where('lu_id', auth()->user()->user_id)->first();
+        
 
         $fu_rate = Transaction::where('is_taken', 0)->where('fu_id', auth()->user()->user_id)->first();
 
         if(!is_null($lu_rate))
         {
+            // This is to grab the stored
             $transaction_state = WalletFundingRequest::where('transaction_id', $lu_rate->transaction_id)->first();
         }
         else
         {
-            $transaction_state = '';
+            $transaction_state = null;
         }
 
-        
+        //return $transaction_state;
 
         $date = new DateTime;
         $date->modify('-10 minutes');

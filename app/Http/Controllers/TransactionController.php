@@ -191,7 +191,8 @@ class TransactionController extends Controller
             "amount" => 'required',
             "subject"  => 'required',
             "description" => 'required',
-            "account_number" => 'required'
+            "account_number" => 'required',
+            "account_name" => 'required'
         ]);
 
         if($validator->fails())
@@ -238,6 +239,7 @@ class TransactionController extends Controller
                 $wfr->user_id = auth()->user()->user_id;
                 $wfr->transaction_id = $transaction_id;
                 $wfr->account_number = $request->account_number;
+                $wfr->account_name = $request->account_name;
                 $wfr->amount = $request->amount;
                 $inserted2 = $wfr->save();
                 return response()->json(['inserted' => true, 'transaction_id' => $transaction_id]);
@@ -262,55 +264,38 @@ class TransactionController extends Controller
 
             $updated = Transaction::where('transaction_id', $request->transaction_id)->update($data);
 
-            if($updated > 0)
-            {
+            $user = User::where('user_id', auth()->user()->user_id)->first();
 
-                $user = User::where('user_id', auth()->user()->user_id)->first();
+            $wfr = new WalletFundingRequest();
+            $wfr->user_id = auth()->user()->user_id;
+            $wfr->transaction_id = $request->transaction_id;
+            $wfr->account_name = $request->account_name;
+            $wfr->account_number = $request->account_number;
+            $wfr->amount = $request->amount_requested;
+            $inserted2 = $wfr->save();
 
-                $wfr = new WalletFundingRequest();
-                $wfr->user_id = auth()->user()->user_id;
-                $wfr->transaction_id = $request->transaction_id;
-                $wfr->account_number = $user->reserved_account_number;
-                $inserted2 = $wfr->save();
+            //Create a fresh Transaction for the Foreign User after an LU connects with it
 
-               // Notification::send(new PaymentConfirmed()); 
+            $transaction_old = Transaction::where('transaction_id', $request->transaction_id)->first();
+        
+            $transaction_id_new = 'TX'.time();
 
-                //Create a fresh Transaction for the Foreign User
+            $transaction = new Transaction();
+            $transaction->transaction_id = $transaction_id_new;
+            $transaction->fu_id = $transaction_old->fu_id;
+            $transaction->rate =  $transaction_old->rate;
+            $transaction->min_amount = $transaction_old->min_amount;
+            $transaction->max_amount = $transaction_old->max_amount;
+            $inserted = $transaction->save();
 
-                $transaction = Transaction::where('transaction_id', $request->transaction_id)->first();
+            
+            
+            //$user->notify(new PaymentSuccessful()); 
+            ////$user2->notify(new PaymentSuccessfulFU()); 
 
-                if($transaction->amount > $request->amount_requested)
-                {
-                    $amount_new = $transaction->amount - $request->amount_requested;
-                    $transaction_id_new = 'TX'.time();
-
-                    $transaction = Transaction::create([
-                        'transaction_id' => $transaction_id_new,
-                        'fu_id' => $transaction->fu_id,
-                        'rate' => $transaction->rate,
-                        'amount' => $amount_new
-                            
-                    ]);
-
-                    $datax = [
-                        'max_amount' => $amount_new,
-                    ];
-
-                    $updated = User::where('user_id', $transaction->fu_id)->update($datax);
-                }
-                
-                $user->notify(new PaymentSuccessful()); 
-                //$user2->notify(new PaymentSuccessfulFU()); 
-  
-
-                //Notification::send(new PaymentConfirmed());
-               
-                return response()->json(['transaction_succeed' => true, 'transaction_id' => $request->transaction_id]);
-            }
-            else
-            {
-                return response()->json(['transaction_succeed' => false]);
-            }
+            // //Notification::send(new PaymentConfirmed());
+            
+            return response()->json(['transaction_succeed' => true, 'transaction_id' => $request->transaction_id]);
 
     }
 
@@ -355,7 +340,6 @@ class TransactionController extends Controller
         else
         {
            
-
             $data2 = [
                 'rate' => $request->rate,
                 'amount' => $request->max_amount,
@@ -381,42 +365,24 @@ class TransactionController extends Controller
 
     public function generatedynamicaccountnumber(Request $request)
     {
+        $user = User::where('user_id', auth()->user()->user_id)->first();
+
         try 
         {
             $response = Http::withHeaders([
                 'X-Auth-Signature' => 'BE09BEE831CF262226B426E39BD1092AF84DC63076D4174FAC78A2261F9A3D6E59744983B8326B69CDF2963FE314DFC89635CFA37A40596508DD6EAAB09402C7',
                 'Client-Id' => 'dGVzdF9Qcm92aWR1cw=='
             ])->post('http://154.113.16.142:8088/appdevapi/api/PiPCreateDynamicAccountNumber', [
-                'account_name' => 'PayHelpa',
+                'account_name' => 'PayHelpa('.$user->name.')',
             ]);
-
 
             return $response;
 
-            
         } 
         catch (\Throwable $th) 
         {
             throw $th;
         }
-
-       
-        //Store P2P state
-
-       
-        // $user = User::where('user_id', auth()->user()->user_id)->first();
-
-        // if($user != null)
-        // {
-        //     $reserved_account_number = $user->reserved_account_number;
-
-        //     return response()->json(['status' => true, 'account_number' => $reserved_account_number]);
-        // }
-        // else
-        // {
-          
-        //     return response()->json(['status' => false, 'account_number' => null]);
-        // }
         
     }
 
